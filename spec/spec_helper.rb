@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "sidekiq/mongo/guard"
+require "pry-byebug"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
