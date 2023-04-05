@@ -1,8 +1,8 @@
-require_relative 'lib/sidekiq/mongo/guard/version'
+require_relative 'lib/sidekiq_mongo_guard/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "sidekiq-mongo-guard"
-  spec.version       = Sidekiq::Mongo::Guard::VERSION
+  spec.version       = SidekiqMongoGuard::VERSION
   spec.authors       = ["Leandro Gomez"]
   spec.email         = ["lgomez@cipherhealth.com"]
 
@@ -24,5 +24,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency 'sidekiq', '>= 5.0.0'
+  spec.add_runtime_dependency 'sidekiq', '>= 5.0.0', '<= 7.0.0'
+  spec.add_runtime_dependency 'mongoid', '>= 4.0.0'
 end

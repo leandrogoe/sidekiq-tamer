@@ -1,11 +1,7 @@
-module Sidekiq::Mongo::Guard::Middleware
+class SidekiqMongoGuard::Middleware
   MIN_TICKET_THRESHOLD = 80
 
   class TicketsTooLowError < StandardError; end;
-
-  def initialize(optional_args)
-    @args = optional_args
-  end
 
   def call(worker, job, queue)
     raise TicketsTooLowError if tickets_too_low?
@@ -17,9 +13,9 @@ module Sidekiq::Mongo::Guard::Middleware
   end
 
   def wiredtiger_tickets
-    @wiredtiger_tickets_read_at ||= Time.now
-    if @wiredtiger_tickets_read_at < 1.minutes.ago
-      @wiredtiger_tickets = Mongoid::Clients.default.database.command('serverStatus'=> 1).documents[0]['wiredTiger']['concurrentTransactions']
+    if !@wiredtiger_tickets_read_at || @wiredtiger_tickets_read_at < Time.now - 60
+      @wiredtiger_tickets = SidekiqMongoGuard::MongoClient.available_tickets
+      @wiredtiger_tickets_read_at ||= Time.now
     end
     @wiredtiger_tickets
   end

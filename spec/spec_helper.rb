@@ -1,5 +1,7 @@
 require "bundler/setup"
 require "pry-byebug"
+require "sidekiq_mongo_guard"
+require "sidekiq/testing"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -10,5 +12,9 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  config.before(:all) do
+    Sidekiq::Testing.inline!
   end
 end
