@@ -1,11 +1,29 @@
+require "sidekiq/job_retry"
+
 class SidekiqMongoGuard::Middleware
   MIN_TICKET_THRESHOLD = 80
 
   class TicketsTooLowError < StandardError; end;
 
   def call(worker, job, queue)
-    raise TicketsTooLowError if tickets_too_low?
+    raise TicketsTooLowError if job_allows_retries?(job) && tickets_too_low?
     yield
+  end
+
+  def job_allows_retries?(job)
+    (job["retry_count"] || -1) + 1 < max_retries_for(job)
+  end
+
+  def max_retries_for(job)
+    if job["retry"] == true || job["retry"] == nil
+      Sidekiq.options[:max_retries] || Sidekiq::JobRetry::DEFAULT_MAX_RETRY_ATTEMPTS
+    elsif job["retry"] == false
+      0
+    elsif job["retry"].is_a?(Integer)
+      job["retry"]
+    else
+      raise StandardError, "Unrecognized retry option"
+    end
   end
 
   def tickets_too_low?
