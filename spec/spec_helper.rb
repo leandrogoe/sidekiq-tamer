@@ -17,4 +17,8 @@ RSpec.configure do |config|
   config.before(:all) do
     Sidekiq::Testing.inline!
   end
+
+  config.before(:each) do
+    SidekiqMongoGuard::MongoClient.clean_wired_tiger_tickets
+  end
 end

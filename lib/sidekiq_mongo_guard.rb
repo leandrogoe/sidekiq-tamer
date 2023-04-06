@@ -4,7 +4,7 @@ require "sidekiq_mongo_guard/mongo_client"
 require "sidekiq"
 
 module SidekiqMongoGuard
-  def self.configure
+  def self.setup
     Sidekiq.configure_server do |config|
       config.server_middleware do |chain|
         chain.add SidekiqMongoGuard::Middleware
@@ -13,4 +13,4 @@ module SidekiqMongoGuard
   end
 end
 
-SidekiqMongoGuard.configure
+SidekiqMongoGuard.setup
