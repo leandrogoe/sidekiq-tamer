@@ -23,7 +23,7 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
     end
 
     it 'should allow job execution when tickets are enough' do
-      expect(SidekiqMongoGuard::MongoClient).to receive(:available_tickets).and_return(
+      expect(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
         { 'write' => { 'available' => 128 }, 'read' => { 'available' => 128 } }
       )
 
@@ -32,11 +32,11 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
     end
 
     it 'should prevent job execution when tickets are not enough' do
-      expect(SidekiqMongoGuard::MongoClient).to receive(:available_tickets).and_return(
+      expect(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
         { 'write' => { 'available' => 1 }, 'read' => { 'available' => 1 } }
       )
 
-      expect { SimpleJob.perform_async }.to raise_error(SidekiqMongoGuard::Middleware::TicketsTooLowError)
+      expect { SimpleJob.perform_async }.to raise_error(SidekiqMongoGuard::Middleware::ResourceUnhealthy)
       expect(SimpleJob.executions.count).to eq 0
     end
   end
@@ -60,7 +60,7 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
     end
 
     it 'should allow job execution even when tickets are not enough' do
-      allow(SidekiqMongoGuard::MongoClient).to receive(:available_tickets).and_return(
+      allow(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
         { 'write' => { 'available' => 1 }, 'read' => { 'available' => 1 } }
       )
 
@@ -88,7 +88,7 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
     end
 
     it 'should allow job execution even when tickets are not enough' do
-      allow(SidekiqMongoGuard::MongoClient).to receive(:available_tickets).and_return(
+      allow(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
         { 'write' => { 'available' => 1 }, 'read' => { 'available' => 1 } }
       )
 

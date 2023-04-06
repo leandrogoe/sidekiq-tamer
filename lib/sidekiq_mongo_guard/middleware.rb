@@ -1,10 +1,17 @@
 require "sidekiq/job_retry"
+require_relative "resource/vault"
 
 class SidekiqMongoGuard::Middleware
-  class TicketsTooLowError < StandardError; end;
+  class ResourceUnhealthy < StandardError; end;
 
   def call(worker, job, queue)
-    raise TicketsTooLowError if job_allows_retries?(job) && SidekiqMongoGuard::MongoClient.tickets_too_low?
+    if job_allows_retries?(job)
+      SidekiqMongoGuard::Resource::Vault.get_resources_for(job).each { |resource|
+        unless resource.is_healthy?
+          raise ResourceUnhealthy, "#{resource.name} is not healthy"
+        end
+      }
+    end
     yield
   end
 

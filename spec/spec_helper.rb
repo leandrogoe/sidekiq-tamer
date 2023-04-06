@@ -19,6 +19,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    SidekiqMongoGuard::MongoClient.clean_wired_tiger_tickets
+    SidekiqMongoGuard::Resource::Mongo.clean_wired_tiger_tickets
   end
 end
