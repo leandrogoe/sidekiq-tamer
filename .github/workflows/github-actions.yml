@@ -1,0 +1,11 @@
+name: Gem Testing
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the images
+        run: docker-compose build
+      - name: Run the tests
+        run: docker-compose up --exit-code-from tests
