@@ -9,8 +9,9 @@ services:
 
   tests:
     build: .
+    container_name: sidekiq-resource-guard-tests
     volumes:
-      - .:/sidekiq_mongo_guard
+      - .:/sidekiq_resource_guard
     stdin_open: true
     tty: true
     entrypoint: sh -c "bundle install && bundle exec rspec $TEST_ARGS"

@@ -2,7 +2,7 @@ require 'mongo'
 require_relative 'mongo_command_subscriber'
 require_relative 'mongo_configuration'
 
-module SidekiqMongoGuard::Mongo
+module SidekiqResourceGuard::Mongo
   class MongoServer
     def self.server_for(host, port)
       key = "#{host}:#{port}"
@@ -25,19 +25,20 @@ module SidekiqMongoGuard::Mongo
     end
 
     def is_operation_safe?(operation)
-      if operation == :read
-        wiredtiger_tickets["read"]["available"] > MongoConfiguration.ticket_threshold
-      else
-        wiredtiger_tickets["write"]["available"] > MongoConfiguration.ticket_threshold
-      end
+      average = wired_tiger_history.map { |entry|
+        entry[:concurrentTransactions][operation.to_s]['available']
+      }.sum / wired_tiger_history.count.to_f
+
+      average >= MongoConfiguration.ticket_threshold
     end
 
-    def wiredtiger_tickets
-      if !@wiredtiger_tickets_read_at || @wiredtiger_tickets_read_at < Time.now - 60
-        @wiredtiger_tickets = available_tickets
-        @wiredtiger_tickets_read_at ||= Time.now
+    def wired_tiger_history
+      @wired_tiger_history ||= []
+      if !@wiredtiger_tickets_read_at || @wiredtiger_tickets_read_at < Time.now - 30
+        @wired_tiger_history.push({ concurrentTransactions: available_tickets, read_at: Time.now })
+        @wiredtiger_tickets_read_at = Time.now
       end
-      @wiredtiger_tickets
+      @wired_tiger_history = @wired_tiger_history.select { |entry| entry[:read_at] >= Time.now - 60 * 2 }
     end
 
     def available_tickets

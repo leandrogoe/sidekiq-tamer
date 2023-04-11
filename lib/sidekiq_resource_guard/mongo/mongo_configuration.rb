@@ -1,11 +1,11 @@
-module SidekiqMongoGuard::Mongo
+module SidekiqResourceGuard::Mongo
   class MongoConfiguration
     MIN_TICKET_THRESHOLD = 80
 
     class << self
       def setup(user:, password:, ticket_threshold: MIN_TICKET_THRESHOLD)
         @options = { user: user, password: password, ticket_threshold: ticket_threshold }
-        subscriber = SidekiqMongoGuard::Mongo::MongoCommandSubscriber.new
+        subscriber = SidekiqResourceGuard::Mongo::MongoCommandSubscriber.new
         ::Mongo::Monitoring::Global.subscribe(::Mongo::Monitoring::COMMAND, subscriber)
       end
 

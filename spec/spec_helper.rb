@@ -1,7 +1,8 @@
 require "bundler/setup"
 require "pry-byebug"
-require "sidekiq_mongo_guard"
+require "sidekiq_resource_guard"
 require "sidekiq/testing"
+require "timecop"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -19,10 +20,10 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    SidekiqMongoGuard::Mongo::MongoServer.clear_servers
-    SidekiqMongoGuard::Mongo::MongoServerOperation.clear_server_operations
-    SidekiqMongoGuard::Mongo::MongoConfiguration.clear
-    SidekiqMongoGuard::Resource::Vault.clean_resources
-    Thread.current[:sidekiq_mongo_guard_job_name] = nil
+    SidekiqResourceGuard::Mongo::MongoServer.clear_servers
+    SidekiqResourceGuard::Mongo::MongoServerOperation.clear_server_operations
+    SidekiqResourceGuard::Mongo::MongoConfiguration.clear
+    SidekiqResourceGuard::Resource::Vault.clean_resources
+    Thread.current[:sidekiq_resource_guard_job_name] = nil
   end
 end

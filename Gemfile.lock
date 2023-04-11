@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sidekiq-mongo-guard (0.1.0)
+    sidekiq-resource-guard (0.1.0)
       mongo (>= 2.0.0)
       sidekiq (>= 5.0.0, < 7.0.0)
 
@@ -47,6 +47,7 @@ GEM
       rack (>= 2.0.0)
       rack-protection (>= 2.0.0)
       redis (>= 4.1.0)
+    timecop (0.9.6)
 
 PLATFORMS
   aarch64-linux
@@ -55,7 +56,8 @@ PLATFORMS
 DEPENDENCIES
   pry-byebug (~> 3.9)
   rspec (~> 3.0)
-  sidekiq-mongo-guard!
+  sidekiq-resource-guard!
+  timecop
 
 BUNDLED WITH
    2.4.10

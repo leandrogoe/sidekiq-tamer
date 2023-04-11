@@ -1,4 +1,4 @@
-module SidekiqMongoGuard::Resource
+module SidekiqResourceGuard::Resource
   module ResourceDependencies
     def jobs
       @jobs ||= Set.new()

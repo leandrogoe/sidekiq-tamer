@@ -1,13 +1,13 @@
 require "sidekiq/job_retry"
 require_relative "resource/vault"
 
-class SidekiqMongoGuard::Middleware
+class SidekiqResourceGuard::Middleware
   class ResourceUnhealthy < StandardError; end;
 
   def call(worker, job, queue)
-    Thread.current[:sidekiq_mongo_guard_job_name] = job["class"]
+    Thread.current[:sidekiq_resource_guard_job_name] = job["class"]
     if job_allows_retries?(job)
-      SidekiqMongoGuard::Resource::Vault.get_resources_for(Object.const_get(job["class"])).each { |resource|
+      SidekiqResourceGuard::Resource::Vault.get_resources_for(Object.const_get(job["class"])).each { |resource|
         unless resource.is_healthy?
           raise ResourceUnhealthy, "#{resource.name} is not healthy"
         end

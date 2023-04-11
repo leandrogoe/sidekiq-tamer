@@ -1,4 +1,4 @@
-module SidekiqMongoGuard::Mongo
+module SidekiqResourceGuard::Mongo
   class MongoCommandSubscriber
     # https://github.com/mongodb/mongo-ruby-driver/blob/413555d553148d8bbf8bea2855cbd9929f3ba587/docs/reference/monitoring.txt#L27
 
@@ -24,10 +24,10 @@ module SidekiqMongoGuard::Mongo
       end
 
       operation = event.command.keys.any? { |key| DATA_MODIFICATION_COMMANDS.include?(key) } ? :write : :read
-      mongo_server_operation = SidekiqMongoGuard::Mongo::MongoServerOperation.server_operation_for(
+      mongo_server_operation = SidekiqResourceGuard::Mongo::MongoServerOperation.server_operation_for(
         event.address.host, event.address.port, operation
       )
-      if job_name = Thread.current[:sidekiq_mongo_guard_job_name]
+      if job_name = Thread.current[:sidekiq_resource_guard_job_name]
         mongo_server_operation.add_job(Object.const_get(job_name))
       end
     end

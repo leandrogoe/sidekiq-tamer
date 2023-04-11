@@ -1,4 +1,4 @@
-module SidekiqMongoGuard::Resource
+module SidekiqResourceGuard::Resource
   class Vault
     def self.get_resources
       resources
