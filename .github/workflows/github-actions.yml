@@ -1,7 +1,7 @@
 name: Gem Testing
 on: push
 jobs:
-  test_2.6.0:
+  test_2_6_0:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -9,7 +9,7 @@ jobs:
         run: docker-compose build
       - name: Run the tests
         run: docker-compose up --exit-code-from tests --attach tests
-  test-latest:
+  test_latest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
