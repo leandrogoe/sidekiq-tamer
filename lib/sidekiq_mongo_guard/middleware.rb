@@ -5,8 +5,9 @@ class SidekiqMongoGuard::Middleware
   class ResourceUnhealthy < StandardError; end;
 
   def call(worker, job, queue)
+    Thread.current[:sidekiq_mongo_guard_job_name] = job["class"]
     if job_allows_retries?(job)
-      SidekiqMongoGuard::Resource::Vault.get_resources_for(job).each { |resource|
+      SidekiqMongoGuard::Resource::Vault.get_resources_for(Object.const_get(job["class"])).each { |resource|
         unless resource.is_healthy?
           raise ResourceUnhealthy, "#{resource.name} is not healthy"
         end
@@ -25,7 +26,7 @@ class SidekiqMongoGuard::Middleware
 
   def max_retries_for(job)
     if job["retry"] == true || job["retry"] == nil
-      Sidekiq.options[:max_retries] || Sidekiq::JobRetry::DEFAULT_MAX_RETRY_ATTEMPTS
+      Sidekiq.options[:max_retries] || 25
     elsif job["retry"] == false
       0
     elsif job["retry"].is_a?(Integer)

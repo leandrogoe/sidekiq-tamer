@@ -1,0 +1,21 @@
+services:
+  mongo:
+    image: mongo:6.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootPassXXX
+    volumes:
+      - $PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/
+
+  tests:
+    build: .
+    volumes:
+      - .:/sidekiq_mongo_guard
+    stdin_open: true
+    tty: true
+    entrypoint: sh -c "bundle install && bundle exec rspec $TEST_ARGS"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootPassXXX
+    depends_on:
+      - mongo

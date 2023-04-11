@@ -1,5 +1,6 @@
 require "sidekiq_mongo_guard/version"
 require "sidekiq_mongo_guard/middleware"
+require "sidekiq_mongo_guard/mongo/mongo_server_operation"
 require "sidekiq"
 
 module SidekiqMongoGuard

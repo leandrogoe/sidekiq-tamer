@@ -1,14 +1,36 @@
 RSpec.describe(SidekiqMongoGuard::Middleware) do
+  let(:dummy_resource) {
+    dummy_resource = Class.new do
+      def name
+        "dummy resource"
+      end
+
+      def is_consumed_by?(job)
+        true
+      end
+
+      def is_healthy?
+        true
+      end
+    end
+
+    stub_const("DummyResource", dummy_resource)
+
+    DummyResource.new
+  }
+
   before(:each) do
     Sidekiq::Testing.server_middleware do |chain|
       chain.add SidekiqMongoGuard::Middleware
     end
+
+    SidekiqMongoGuard::Resource::Vault.add_resources(dummy_resource)
   end
 
   describe 'when the job can be retried' do
     before(:each) do
       simple_job = Class.new do
-        include Sidekiq::Job
+        include Sidekiq::Worker
 
         def self.executions
           @executions ||= []
@@ -22,29 +44,33 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
       stub_const 'SimpleJob', simple_job
     end
 
-    it 'should allow job execution when tickets are enough' do
-      expect(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
-        { 'write' => { 'available' => 128 }, 'read' => { 'available' => 128 } }
-      )
+    it 'should allow job execution when the resource is healthy' do
+      expect(dummy_resource).to receive(:is_healthy?).and_return(true)
 
       expect { SimpleJob.perform_async }.to_not raise_error
       expect(SimpleJob.executions.count).to eq 1
     end
 
-    it 'should prevent job execution when tickets are not enough' do
-      expect(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
-        { 'write' => { 'available' => 1 }, 'read' => { 'available' => 1 } }
-      )
+    it 'should prevent job execution when the resource is not healthy' do
+      expect(dummy_resource).to receive(:is_healthy?).and_return(false)
 
       expect { SimpleJob.perform_async }.to raise_error(SidekiqMongoGuard::Middleware::ResourceUnhealthy)
       expect(SimpleJob.executions.count).to eq 0
+    end
+
+    it 'should allow job execution when the resource is not healthy but the job does not depend on it' do
+      allow(dummy_resource).to receive(:is_healthy?).and_return(false)
+      expect(dummy_resource).to receive(:is_consumed_by?).and_return(false)
+
+      expect { SimpleJob.perform_async }.to_not raise_error
+      expect(SimpleJob.executions.count).to eq 1
     end
   end
 
   describe 'when the job does not accept retries' do
     before(:each) do
       simple_job = Class.new do
-        include Sidekiq::Job
+        include Sidekiq::Worker
         sidekiq_options retry: false
 
         def self.executions
@@ -59,10 +85,8 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
       stub_const 'SimpleJob', simple_job
     end
 
-    it 'should allow job execution even when tickets are not enough' do
-      allow(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
-        { 'write' => { 'available' => 1 }, 'read' => { 'available' => 1 } }
-      )
+    it 'should allow job execution even when the resource is not healthy' do
+      allow(dummy_resource).to receive(:is_healthy?).and_return(true)
 
       expect { SimpleJob.perform_async }.to_not raise_error
       expect(SimpleJob.executions.count).to eq 1
@@ -72,7 +96,7 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
   describe 'when the job accept retries, but they have run out' do
     before(:each) do
       simple_job = Class.new do
-        include Sidekiq::Job
+        include Sidekiq::Worker
         sidekiq_options retry: 10
 
         def self.executions
@@ -87,10 +111,8 @@ RSpec.describe(SidekiqMongoGuard::Middleware) do
       stub_const 'SimpleJob', simple_job
     end
 
-    it 'should allow job execution even when tickets are not enough' do
-      allow(SidekiqMongoGuard::Resource::Mongo).to receive(:available_tickets).and_return(
-        { 'write' => { 'available' => 1 }, 'read' => { 'available' => 1 } }
-      )
+    it 'should allow job execution even when the resource is not healthy' do
+      allow(dummy_resource).to receive(:is_healthy?).and_return(true)
 
       expect {
         Sidekiq::Client.push(

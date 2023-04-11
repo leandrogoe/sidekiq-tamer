@@ -1,0 +1,7 @@
+#!/bin/bash
+
+TEST_ARGS="$@" docker-compose up -d && docker attach sidekiq-mongo-guard-tests-1 && docker-compose down
+
+
+
+
