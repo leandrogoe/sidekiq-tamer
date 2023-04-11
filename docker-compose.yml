@@ -5,7 +5,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=rootPassXXX
     volumes:
-      - $PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/
+      - $PWD/spec/mongo-entrypoint/:/docker-entrypoint-initdb.d/
 
   tests:
     build: .

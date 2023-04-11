@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Leandro Gomez"]
   spec.email         = ["lgomez@cipherhealth.com"]
 
-  spec.summary       = %q{Adds a Sidekiq middleware that prevents killing MongoDB}
+  spec.summary       = %q{Sidekiq middleware to protect your resources from Sidekiq scaling}
   spec.homepage      = "https://github.com/leandrogoe/sidekiq-resource-guard"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")

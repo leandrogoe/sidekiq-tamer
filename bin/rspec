@@ -1,7 +1,3 @@
 #!/bin/bash
 
 TEST_ARGS="$@" docker-compose up -d && docker attach sidekiq-resource-guard-tests && docker-compose down
-
-
-
-
