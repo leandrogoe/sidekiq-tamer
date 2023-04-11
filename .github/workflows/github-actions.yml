@@ -1,11 +1,19 @@
 name: Gem Testing
 on: push
 jobs:
-  test:
+  test-2.6.0:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Build the images
         run: docker-compose build
       - name: Run the tests
-        run: docker-compose up --exit-code-from tests
+        run: docker-compose up --exit-code-from tests --attach tests
+  test-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the images
+        run: docker-compose build
+      - name: Run the tests
+        run: RUBY_VERSION=latest docker-compose up --exit-code-from tests --attach tests
