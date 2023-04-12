@@ -1,15 +1,15 @@
 require 'mongo'
-require_relative 'mongo_command_subscriber'
+require_relative 'command_subscriber'
 require_relative '../resource/resource_dependencies'
-require_relative 'mongo_server'
+require_relative 'server'
 
 module SidekiqResourceGuard::Mongo
-  class MongoServerOperation
+  class ServerOperation
     include SidekiqResourceGuard::Resource::ResourceDependencies
 
     def self.server_operation_for(host, port, operation)
       key = "#{host}:#{port}:#{operation}"
-      server_operations[key] ||= MongoServerOperation.new(host, port, operation)
+      server_operations[key] ||= ServerOperation.new(host, port, operation)
       server_operations[key]
     end
 
@@ -23,7 +23,7 @@ module SidekiqResourceGuard::Mongo
 
     attr_reader :operation, :server
     def initialize(host, port, operation)
-      @server = MongoServer.server_for(host, port)
+      @server = Server.server_for(host, port)
       @operation = operation
       SidekiqResourceGuard::Resource::Vault.add_resources(self)
     end

@@ -1,0 +1,2 @@
+# Validate the PR title, and ignore all commit messages
+titleOnly: true

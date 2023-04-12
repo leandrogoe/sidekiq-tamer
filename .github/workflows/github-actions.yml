@@ -1,19 +1,62 @@
 name: Gem Testing
 on: push
 jobs:
-  test-2.6.0:
+  test_2_7_0:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Build the images
-        run: docker-compose build
+        run: RUBY_VERSION=2.7.0 docker-compose build
       - name: Run the tests
-        run: docker-compose up --exit-code-from tests --attach tests
-  test-latest:
+        run: RUBY_VERSION=2.7.0 docker-compose up --exit-code-from tests --attach tests
+  test_latest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Build the images
-        run: docker-compose build
+        run: RUBY_VERSION=latest docker-compose build
       - name: Run the tests
         run: RUBY_VERSION=latest docker-compose up --exit-code-from tests --attach tests
+  release:
+    runs-on: ubuntu-latest
+    container:
+      image: ruby:3.0.4
+    if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip-ci]')
+    env:
+      RUBY_GEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set git info
+        run: |
+          git config --global user.email "leandrogoe@gmail.com"
+          git config --global user.name "Leandro Gomez"
+      - name: Bundle install
+        run: |
+          git config --global --add safe.directory /sidekiq_resource_guard; \
+          gem install bundler --version 2.4.10; \
+          bundle install
+      - name: Determine version bump type
+        run: |
+          message=$(git log -1 --pretty=format:'%s')
+          if echo "$message" | grep -iq "fix:"; then
+            echo bump=patch >> $GITHUB_ENV
+          elif echo "$message" | grep -iq "feat:"; then
+            echo bump=minor >> $GITHUB_ENV
+          elif echo "$message" | grep -iq "BREAKING CHANGE:"; then
+            echo bump=major >> $GITHUB_ENV
+          else
+            echo bump=patch >> $GITHUB_ENV
+          fi
+      - name: Release
+        run: |
+          mkdir ~/.gem
+          echo "---\\n:rubygems_api_key: ${RUBY_GEMS_API_KEY}\\n:status: :ok\\n" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+          # DEBUG: output any git changes
+          git status
+          bundle exec gem bump -v ${{ env.bump }} --file lib/sidekiq_resource_guard/version.rb --no-commit
+          bundle install; # Update Gemfile.lock with new version
+          git commit -am "Bumping gem version [skip-ci]"
+          bundle exec gem release -t
+          git push
+    needs: [test_2_7_0, test_latest]

@@ -1,7 +1,7 @@
-RSpec.describe(SidekiqResourceGuard::Mongo::MongoServerOperation) do
+RSpec.describe(SidekiqResourceGuard::Mongo::ServerOperation) do
 
   before(:each) do
-    SidekiqResourceGuard::Mongo::MongoConfiguration.setup(user: 'USER', password: 'PASSWORD')
+    SidekiqResourceGuard::Mongo::Configuration.setup(user: 'USER', password: 'PASSWORD')
   end
 
   describe 'reads' do
@@ -31,7 +31,7 @@ RSpec.describe(SidekiqResourceGuard::Mongo::MongoServerOperation) do
       StaffFinder.perform_async
       staff_finder_resources = SidekiqResourceGuard::Resource::Vault.get_resources_for(StaffFinder)
       expect(staff_finder_resources.count).to eq 1
-      expect(staff_finder_resources.first.class).to eq(SidekiqResourceGuard::Mongo::MongoServerOperation)
+      expect(staff_finder_resources.first.class).to eq(SidekiqResourceGuard::Mongo::ServerOperation)
       expect(staff_finder_resources.first.operation).to eq(:read)
     end
 
@@ -46,7 +46,7 @@ RSpec.describe(SidekiqResourceGuard::Mongo::MongoServerOperation) do
       end
 
       it 'rejects jobs when read tickets are low' do
-        expect(SidekiqResourceGuard::Mongo::MongoServer.servers.values.first).to receive(:is_operation_safe?).with(:read).and_return(false)
+        expect(SidekiqResourceGuard::Mongo::Server.servers.values.first).to receive(:is_operation_safe?).with(:read).and_return(false)
 
         expect { StaffFinder.perform_async }.to raise_error(SidekiqResourceGuard::Middleware::ResourceUnhealthy)
       end
@@ -80,7 +80,7 @@ RSpec.describe(SidekiqResourceGuard::Mongo::MongoServerOperation) do
       StaffFinder.perform_async
       staff_finder_resources = SidekiqResourceGuard::Resource::Vault.get_resources_for(StaffFinder)
       expect(staff_finder_resources.count).to eq 1
-      expect(staff_finder_resources.first.class).to eq(SidekiqResourceGuard::Mongo::MongoServerOperation)
+      expect(staff_finder_resources.first.class).to eq(SidekiqResourceGuard::Mongo::ServerOperation)
       expect(staff_finder_resources.first.operation).to eq(:write)
     end
 
@@ -95,7 +95,7 @@ RSpec.describe(SidekiqResourceGuard::Mongo::MongoServerOperation) do
       end
 
       it 'rejects jobs when read tickets are low' do
-        expect(SidekiqResourceGuard::Mongo::MongoServer.servers.values.first).to receive(:is_operation_safe?).with(:write).and_return(false)
+        expect(SidekiqResourceGuard::Mongo::Server.servers.values.first).to receive(:is_operation_safe?).with(:write).and_return(false)
 
         expect { StaffFinder.perform_async }.to raise_error(SidekiqResourceGuard::Middleware::ResourceUnhealthy)
       end
