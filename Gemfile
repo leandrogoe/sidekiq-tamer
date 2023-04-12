@@ -6,3 +6,4 @@ gemspec
 gem "rspec", "~> 3.0"
 gem "pry-byebug", "~> 3.9"
 gem "timecop"
+gem "pry", "~> 0.14.1"
