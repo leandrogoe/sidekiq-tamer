@@ -1,6 +1,6 @@
 require "sidekiq_resource_guard/version"
 require "sidekiq_resource_guard/middleware"
-require "sidekiq_resource_guard/mongo/mongo_server_operation"
+require "sidekiq_resource_guard/mongo/server_operation"
 require "sidekiq"
 
 module SidekiqResourceGuard

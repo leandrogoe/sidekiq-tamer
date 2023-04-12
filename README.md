@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-With the help of this gem you can push back the execution of your jobs whenever the resources they depend on are considerd to be on an unhealthy state. The concept of resource is rather generic and you can provide your own implementation of whatever resource you like, such a database or an API endpoint. We also provide a library to manage a few specific resources that you can simply drop-in your code.
+With the help of this gem you can push back the execution of your jobs whenever the resources they depend on are considerd to be on an unhealthy or stressed state. The concept of resource is rather generic and you can provide your own implementation of whatever resource you like, such a database or an API endpoint. We also provide a library to manage a few specific resources that you can simply drop-in your code.
 
 ### Implementing your own resource
 
@@ -47,6 +47,10 @@ Let's say you have a resource which you know has been hammered by your backgroun
 ```
 
 That's it! Whenever the `is_healthy?` method returns `false` for a job that consumes this resource (see `is_consumed_by?` method), the Sidekiq middleware that this gem introduces will raise an exception forcing the job to be retried later on.
+
+### MongoDB
+
+For now the resource library included in this gem is limited to a single resource type, a MongoDB cluster.
 
 ## Development
 

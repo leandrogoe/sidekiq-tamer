@@ -20,9 +20,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    SidekiqResourceGuard::Mongo::MongoServer.clear_servers
-    SidekiqResourceGuard::Mongo::MongoServerOperation.clear_server_operations
-    SidekiqResourceGuard::Mongo::MongoConfiguration.clear
+    SidekiqResourceGuard::Mongo::Server.clear_servers
+    SidekiqResourceGuard::Mongo::ServerOperation.clear_server_operations
+    SidekiqResourceGuard::Mongo::Configuration.clear
     SidekiqResourceGuard::Resource::Vault.clean_resources
     Thread.current[:sidekiq_resource_guard_job_name] = nil
   end

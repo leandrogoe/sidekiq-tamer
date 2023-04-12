@@ -1,12 +1,12 @@
 require 'mongo'
-require_relative 'mongo_command_subscriber'
-require_relative 'mongo_configuration'
+require_relative 'command_subscriber'
+require_relative 'configuration'
 
 module SidekiqResourceGuard::Mongo
-  class MongoServer
+  class Server
     def self.server_for(host, port)
       key = "#{host}:#{port}"
-      servers[key] ||= MongoServer.new(host, port)
+      servers[key] ||= Server.new(host, port)
       servers[key]
     end
 
@@ -29,7 +29,7 @@ module SidekiqResourceGuard::Mongo
         entry[:concurrentTransactions][operation.to_s]['available']
       }.sum / wired_tiger_history.count.to_f
 
-      average >= MongoConfiguration.ticket_threshold
+      average >= Configuration.ticket_threshold
     end
 
     def wired_tiger_history
@@ -47,7 +47,7 @@ module SidekiqResourceGuard::Mongo
 
     def client
       @client ||= Mongo::Client.new(
-        [ "#{host}:#{port}" ], database: 'admin', user: MongoConfiguration.user, password: MongoConfiguration.password, auth_source: 'admin',
+        [ "#{host}:#{port}" ], database: 'admin', user: Configuration.user, password: Configuration.password, auth_source: 'admin',
       )
     end
 

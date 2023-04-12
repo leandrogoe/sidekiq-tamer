@@ -4,7 +4,9 @@ FROM ruby:$RUBY_VERSION
 COPY . /sidekiq_resource_guard
 WORKDIR /sidekiq_resource_guard
 
-RUN git config --global --add safe.directory /sidekiq_resource_guard; \
+RUN git config --global user.email "leandrogoe@gmail.com" \
+    git config --global user.name "Leandro Gomez" \
+    git config --global --add safe.directory /sidekiq_resource_guard; \
     gem install bundler --version 2.4.10; \
     bundle install
 
