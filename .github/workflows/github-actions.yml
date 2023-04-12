@@ -21,10 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Check git
-        run: git status
       - name: Build
         run: docker build . -t sidekiq_resource_guard
+      - name: Check git
+        run: docker run --entrypoint "git" sidekiq_resource_guard diff
       - name: Release
         run: docker run --entrypoint "bundle" sidekiq_resource_guard exec gem release
     needs: [test_2_7_0, test_latest]
