@@ -30,17 +30,17 @@ jobs:
         run: |
           message=$(git log -1 --pretty=format:'%s')
           if echo "$message" | grep -iq "fix:"; then
-            echo "::set-output name=bump::patch"
+            echo bump=patch >> $GITHUB_ENV
           elif echo "$message" | grep -iq "feat:"; then
-            echo "::set-output name=bump::minor"
+            echo bump=minor >> $GITHUB_ENV
           elif echo "$message" | grep -iq "BREAKING CHANGE:"; then
-            echo "::set-output name=bump::major"
+            echo bump=major >> $GITHUB_ENV
           else
-            echo "::set-output name=bump::patch"
+            echo bump=patch >> $GITHUB_ENV
           fi
       - name: Release
         run: |
           docker build . -t sidekiq_resource_guard
-          "echo ---\\n:rubygems_api_key: $RUBY_GEMS_API_KEY\\n:status: :ok\\n > ./credentials"
-          docker run --entrypoint "bundle" -v ./credentials:/root/.gem/credentials sidekiq_resource_guard exec gem bump -v ${{ steps.get_commit_message.outputs.bump }} --skip-ci
+          echo "---\\n:rubygems_api_key: $RUBY_GEMS_API_KEY\\n:status: :ok\\n >" ./credentials
+          docker run --entrypoint "bundle" -v ./credentials:/root/.gem/credentials sidekiq_resource_guard exec gem bump -v ${{ env.bump }} --skip-ci
     needs: [test_2_7_0, test_latest]
