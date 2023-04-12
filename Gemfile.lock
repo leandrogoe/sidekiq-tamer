@@ -26,7 +26,6 @@ GEM
     rack (3.0.7)
     rack-protection (3.0.5)
       rack
-    rake (12.3.3)
     redis (5.0.6)
       redis-client (>= 0.9.0)
     redis-client (0.14.1)
@@ -59,7 +58,6 @@ DEPENDENCIES
   gem-release
   pry (~> 0.14.1)
   pry-byebug (~> 3.9)
-  rake (~> 12.0)
   rspec (~> 3.0)
   sidekiq-resource-guard!
   timecop
