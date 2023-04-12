@@ -29,19 +29,18 @@ jobs:
         id: get_commit_message
         run: |
           message=$(git log -1 --pretty=format:'%s')
-          if echo "$message" | grep -iq "FIX"; then
+          if echo "$message" | grep -iq "fix:"; then
             echo "::set-output name=bump::patch"
-          elif echo "$message" | grep -iq "FEATURE"; then
+          elif echo "$message" | grep -iq "feat:"; then
             echo "::set-output name=bump::minor"
-          elif echo "$message" | grep -iq "BREAKING"; then
+          elif echo "$message" | grep -iq "BREAKING CHANGE:"; then
             echo "::set-output name=bump::major"
           else
-            echo "::set-output name=bump::minor"
+            echo "::set-output name=bump::patch"
           fi
-      - name: Set credentials
-        run: "echo ---\\n:rubygems_api_key: $RUBY_GEMS_API_KEY\\n:status: :ok\\n > ~/.gem/credentials"
-      - name: Build
-        run: docker build . -t sidekiq_resource_guard
       - name: Release
-        run: docker run --entrypoint "bundle" -v ~/.gem/credentials:/root/.gem/credentials sidekiq_resource_guard exec gem bump -v ${{ steps.get_commit_message.outputs.bump }} --skip-ci
+        run: |
+          docker build . -t sidekiq_resource_guard
+          "echo ---\\n:rubygems_api_key: $RUBY_GEMS_API_KEY\\n:status: :ok\\n > ./credentials"
+          docker run --entrypoint "bundle" -v ./credentials:/root/.gem/credentials sidekiq_resource_guard exec gem bump -v ${{ steps.get_commit_message.outputs.bump }} --skip-ci
     needs: [test_2_7_0, test_latest]
