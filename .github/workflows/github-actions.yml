@@ -14,6 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the images
-        run: docker-compose build
+        run: RUBY_VERSION=latest docker-compose build
       - name: Run the tests
         run: RUBY_VERSION=latest docker-compose up --exit-code-from tests --attach tests
