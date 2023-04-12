@@ -46,6 +46,8 @@ Let's say you have a resource which you know has been hammered by your backgroun
    SidekiqResourceGuard::Resource::Vault.add_resources(MyDatabaseResource.new)
 ```
 
+That's it! Whenever the `is_healthy?` method returns `false` for a job that consumes this resource (see `is_consumed_by?` method), the Sidekiq middleware that this gem introduces will raise an exception forcing the job to be retried later on.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
