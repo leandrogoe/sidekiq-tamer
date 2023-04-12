@@ -21,8 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ruby:3.0.4
-    if: github.ref == 'refs/heads/main'
-    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+    if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip-ci]')
     env:
       RUBY_GEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
