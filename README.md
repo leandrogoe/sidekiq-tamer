@@ -1,8 +1,6 @@
-# Sidekiq::Mongo::Guard
+# Sidekiq Resource Guard
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/sidekiq_resource_guard`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A simple way to protect your resources from excessive Sidekiq scaling.
 
 ## Installation
 
@@ -22,7 +20,31 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+With the help of this gem you can push back the execution of your jobs whenever the resources they depend on are considerd to be on an unhealthy state. The concept of resource is rather generic and you can provide your own implementation of whatever resource you like, such a database or an API endpoint. We also provide a library to manage a few specific resources that you can simply drop-in your code.
+
+### Implementing your own resource
+
+Let's say you have a resource which you know has been hammered by your background jobs in the past and you want to prevent this from happening in the future. For the sake of having a simple example, let's say we are talking about a database and we can call it "my database". Then the only thing you would need to do is declare a class that implements the interface described above and then add an instance to the resource vault:
+
+```
+   class MyDatabaseResource
+    def is_consumed_by?(job)
+      true
+    end
+
+    def name
+      "My Database"
+    end
+
+    def is_healthy?
+      # Add some logic to assess it is safe to use the resource
+    end
+   end
+```
+
+```
+   SidekiqResourceGuard::Resource::Vault.add_resources(MyDatabaseResource.new)
+```
 
 ## Development
 
