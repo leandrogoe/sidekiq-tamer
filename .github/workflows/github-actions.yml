@@ -19,12 +19,15 @@ jobs:
         run: RUBY_VERSION=latest docker-compose up --exit-code-from tests --attach tests
   release:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    env:
+      RUBY_GEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
       - uses: actions/checkout@v3
+      - name: Set credentials
+        run: "echo ---\\n:rubygems_api_key: $RUBY_GEMS_API_KEY\\n:status: :ok\\n > ~/.gem/credentials"
       - name: Build
         run: docker build . -t sidekiq_resource_guard
-      - name: Check git
-        run: docker run --entrypoint "git" sidekiq_resource_guard diff
       - name: Release
-        run: docker run --entrypoint "bundle" sidekiq_resource_guard exec gem release
+        run: docker run --entrypoint "bundle" -v ~/.gem/credentials:/root/.gem/credentials sidekiq_resource_guard exec gem release
     needs: [test_2_7_0, test_latest]
