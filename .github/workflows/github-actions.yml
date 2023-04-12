@@ -18,9 +18,11 @@ jobs:
       - name: Run the tests
         run: RUBY_VERSION=latest docker-compose up --exit-code-from tests --attach tests
   release:
-    runs-on: ruby:3.0.4
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Build
+        run: docker build . -t sidekiq_resource_guard
       - name: Release
-        run: bundle exec gem release
+        run: docker run --entrypoint "bundle" sidekiq_resource_guard exec gem release
     needs: [test_2_7_0, test_latest]
