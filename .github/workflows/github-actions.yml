@@ -58,10 +58,10 @@ jobs:
           # DEBUG: output any git changes
           git status
           bundle exec gem bump -v ${{ env.bump }} --file lib/sidekiq_resource_guard/version.rb --skip-ci
+          git push
           # DEBUG: output any git changes
           git diff
           # DEBUG: output any git changes
           git status
           bundle exec gem release -t
-          git push
     needs: [test_2_7_0, test_latest]
