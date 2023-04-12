@@ -11,7 +11,7 @@ services:
     build:
       context: .
       args:
-        RUBY_VERSION: ${RUBY_VERSION:-2.6.0}
+        RUBY_VERSION: ${RUBY_VERSION:-2.7.0}
     container_name: sidekiq-resource-guard-tests
     volumes:
       - .:/sidekiq_resource_guard

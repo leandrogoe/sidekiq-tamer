@@ -6,9 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the images
-        run: docker-compose build
+        run: RUBY_VERSION=2.6.0 docker-compose build
       - name: Run the tests
-        run: docker-compose up --exit-code-from tests --attach tests
+        run: RUBY_VERSION=2.6.0 docker-compose up --exit-code-from tests --attach tests
   test_latest:
     runs-on: ubuntu-latest
     steps:
