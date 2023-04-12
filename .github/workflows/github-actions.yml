@@ -57,7 +57,7 @@ jobs:
           git status
           bundle exec gem bump -v ${{ env.bump }} --file lib/sidekiq_resource_guard/version.rb --no-commit
           bundle install; # Update Gemfile.lock with new version
-          git commit -m "Bumping gem version [skip-ci]"
+          git commit -am "Bumping gem version [skip-ci]"
           bundle exec gem release -t
           git push
     needs: [test_2_7_0, test_latest]
