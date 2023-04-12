@@ -50,17 +50,19 @@ That's it! Whenever the `is_healthy?` method returns `false` for a job that cons
 
 ### MongoDB
 
-For now the resource library included in this gem is limited to a single resource type, a MongoDB cluster.
+For now the resource library included in this gem is limited to a single resource type, a MongoDB cluster. The `Mongo::ServerOperation` resource is implemented using a query observer that determines automatically which jobs depends on which mongo servers and what kind of operations they use. Then it uses WiredTiger stats that include how many read and write tickets are available in the server to determine if the operation is allowed or not.
 
-## Development
+In order to start the Mongo resource management, simple execute the following line during your code initialization:
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+```
+SidekiqResourceGuard::Mongo::Configuration.setup(user: 'your_user', password: 'your_password')
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+In order for the health monitor to work you will need to supply a user that has the `clusterMonitor` role enabled on the admin database of your cluster.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/sidekiq-resource-guard.
+Bug reports and pull requests are welcome on GitHub at https://github.com/leandrogoe/sidekiq-resource-guard.
 
 
 ## License
