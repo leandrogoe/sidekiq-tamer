@@ -1,4 +1,4 @@
-ARG RUBY_VERSION=2.6.0
+ARG RUBY_VERSION=2.7.0
 
 FROM ruby:$RUBY_VERSION
 COPY . /sidekiq_resource_guard
