@@ -55,6 +55,7 @@ jobs:
           chmod 0600 ~/.gem/credentials
           # DEBUG: output any git changes
           git diff
-          bundle exec gem bump -v ${{ env.bump }} --file lib/sidekiq_resource_guard/version.rb --skip-ci --tag --release
+          bundle exec gem bump -v ${{ env.bump }} --file lib/sidekiq_resource_guard/version.rb --skip-ci
+          bundle exec gem release -t
           git push
     needs: [test_2_7_0, test_latest]
