@@ -17,3 +17,10 @@ jobs:
         run: RUBY_VERSION=latest docker-compose build
       - name: Run the tests
         run: RUBY_VERSION=latest docker-compose up --exit-code-from tests --attach tests
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Release the gem
+      - run: bundle exec gem release
+    needs: [test_2_7_0, test_latest]
