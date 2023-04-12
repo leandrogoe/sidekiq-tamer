@@ -21,8 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      #- name: Bump version number
-      #- run: bundle exec gem bump --file lib/sidekiq_resource_guard/version.rb --skip-ci
       - name: Release
-      - run: bundle exec gem release
+        run: bundle exec gem release
     needs: [test_2_7_0, test_latest]
