@@ -12,9 +12,9 @@ services:
       context: .
       args:
         RUBY_VERSION: ${RUBY_VERSION:-2.7.0}
-    container_name: sidekiq-resource-guard-tests
+    container_name: sidekiq-tamer-tests
     volumes:
-      - .:/sidekiq_resource_guard
+      - .:/sidekiq_tamer
     stdin_open: true
     tty: true
     entrypoint: sh -c "bundle install && bundle exec rspec $TEST_ARGS"

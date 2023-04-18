@@ -1,4 +1,4 @@
-module SidekiqResourceGuard::Resource
+module SidekiqTamer::Resource
   module ResourceDependencies
     def jobs
       @jobs ||= Set.new()

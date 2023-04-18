@@ -1,7 +1,7 @@
-RSpec.describe(SidekiqResourceGuard::Mongo::ServerOperation) do
+RSpec.describe(SidekiqTamer::Mongo::ServerOperation) do
 
   before(:each) do
-    SidekiqResourceGuard::Mongo::Configuration.setup(user: 'USER', password: 'PASSWORD')
+    SidekiqTamer::Mongo::Configuration.setup(user: 'USER', password: 'PASSWORD')
   end
 
   describe 'reads' do
@@ -26,12 +26,12 @@ RSpec.describe(SidekiqResourceGuard::Mongo::ServerOperation) do
     end
 
     it 'registers operations correctly' do
-      staff_finder_resources = SidekiqResourceGuard::Resource::Vault.get_resources_for(StaffFinder)
+      staff_finder_resources = SidekiqTamer::Resource::Vault.get_resources_for(StaffFinder)
       expect(staff_finder_resources.count).to eq 0
       StaffFinder.perform_async
-      staff_finder_resources = SidekiqResourceGuard::Resource::Vault.get_resources_for(StaffFinder)
+      staff_finder_resources = SidekiqTamer::Resource::Vault.get_resources_for(StaffFinder)
       expect(staff_finder_resources.count).to eq 1
-      expect(staff_finder_resources.first.class).to eq(SidekiqResourceGuard::Mongo::ServerOperation)
+      expect(staff_finder_resources.first.class).to eq(SidekiqTamer::Mongo::ServerOperation)
       expect(staff_finder_resources.first.operation).to eq(:read)
     end
 
@@ -39,16 +39,16 @@ RSpec.describe(SidekiqResourceGuard::Mongo::ServerOperation) do
 
       before(:each) do
         Sidekiq::Testing.server_middleware do |chain|
-          chain.add SidekiqResourceGuard::Middleware
+          chain.add SidekiqTamer::Middleware
         end
 
         StaffFinder.perform_async
       end
 
       it 'rejects jobs when read tickets are low' do
-        expect(SidekiqResourceGuard::Mongo::Server.servers.values.first).to receive(:is_operation_safe?).with(:read).and_return(false)
+        expect(SidekiqTamer::Mongo::Server.servers.values.first).to receive(:is_operation_safe?).with(:read).and_return(false)
 
-        expect { StaffFinder.perform_async }.to raise_error(SidekiqResourceGuard::Middleware::ResourceUnhealthy)
+        expect { StaffFinder.perform_async }.to raise_error(SidekiqTamer::Middleware::ResourceUnhealthy)
       end
     end
   end
@@ -75,12 +75,12 @@ RSpec.describe(SidekiqResourceGuard::Mongo::ServerOperation) do
     end
 
     it 'registers operations correctly' do
-      staff_finder_resources = SidekiqResourceGuard::Resource::Vault.get_resources_for(StaffFinder)
+      staff_finder_resources = SidekiqTamer::Resource::Vault.get_resources_for(StaffFinder)
       expect(staff_finder_resources.count).to eq 0
       StaffFinder.perform_async
-      staff_finder_resources = SidekiqResourceGuard::Resource::Vault.get_resources_for(StaffFinder)
+      staff_finder_resources = SidekiqTamer::Resource::Vault.get_resources_for(StaffFinder)
       expect(staff_finder_resources.count).to eq 1
-      expect(staff_finder_resources.first.class).to eq(SidekiqResourceGuard::Mongo::ServerOperation)
+      expect(staff_finder_resources.first.class).to eq(SidekiqTamer::Mongo::ServerOperation)
       expect(staff_finder_resources.first.operation).to eq(:write)
     end
 
@@ -88,16 +88,16 @@ RSpec.describe(SidekiqResourceGuard::Mongo::ServerOperation) do
 
       before(:each) do
         Sidekiq::Testing.server_middleware do |chain|
-          chain.add SidekiqResourceGuard::Middleware
+          chain.add SidekiqTamer::Middleware
         end
 
         StaffFinder.perform_async
       end
 
       it 'rejects jobs when read tickets are low' do
-        expect(SidekiqResourceGuard::Mongo::Server.servers.values.first).to receive(:is_operation_safe?).with(:write).and_return(false)
+        expect(SidekiqTamer::Mongo::Server.servers.values.first).to receive(:is_operation_safe?).with(:write).and_return(false)
 
-        expect { StaffFinder.perform_async }.to raise_error(SidekiqResourceGuard::Middleware::ResourceUnhealthy)
+        expect { StaffFinder.perform_async }.to raise_error(SidekiqTamer::Middleware::ResourceUnhealthy)
       end
     end
   end

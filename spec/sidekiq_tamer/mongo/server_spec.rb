@@ -1,15 +1,15 @@
-RSpec.describe(SidekiqResourceGuard::Mongo::Server) do
+RSpec.describe(SidekiqTamer::Mongo::Server) do
 
   let(:host) { 'mongo' }
   let(:port) { 27017 }
 
   describe 'unauthorized' do
     before(:each) do
-      SidekiqResourceGuard::Mongo::Configuration.setup(user: 'USER', password: 'PASS', ticket_threshold: 80)
+      SidekiqTamer::Mongo::Configuration.setup(user: 'USER', password: 'PASS', ticket_threshold: 80)
     end
 
     it 'fails to query tickets if it does not have the appropriate role' do
-      server = SidekiqResourceGuard::Mongo::Server.new(host, port)
+      server = SidekiqTamer::Mongo::Server.new(host, port)
       expect(server.client.database).to receive(:command).with('serverStatus' => 1).exactly(1).times.and_call_original
 
       expect { server.is_operation_safe?(:write) }.to raise_error(Mongo::Error::OperationFailure)
@@ -18,11 +18,11 @@ RSpec.describe(SidekiqResourceGuard::Mongo::Server) do
 
   describe 'with proper access' do
     before(:each) do
-      SidekiqResourceGuard::Mongo::Configuration.setup(user: 'clusterMonitor', password: 'PASS', ticket_threshold: 80)
+      SidekiqTamer::Mongo::Configuration.setup(user: 'clusterMonitor', password: 'PASS', ticket_threshold: 80)
     end
 
     it 'caches the wired tiger tickets' do
-      server = SidekiqResourceGuard::Mongo::Server.new(host, port)
+      server = SidekiqTamer::Mongo::Server.new(host, port)
       expect(server.client.database).to receive(:command).with('serverStatus' => 1).exactly(1).times.and_call_original
 
       expect(server.is_operation_safe?(:write)).to be_truthy
@@ -31,7 +31,7 @@ RSpec.describe(SidekiqResourceGuard::Mongo::Server) do
     end
 
     it 'returns unsafe for read when tickets are below the threshold' do
-      server = SidekiqResourceGuard::Mongo::Server.new(host, port)
+      server = SidekiqTamer::Mongo::Server.new(host, port)
       expect(server.client.database).to receive(:command).with('serverStatus' => 1).exactly(1).times.and_return(
         double(documents: [
           {
@@ -47,7 +47,7 @@ RSpec.describe(SidekiqResourceGuard::Mongo::Server) do
     end
 
     it 'returns unsafe for write when tickets are below the threshold' do
-      server = SidekiqResourceGuard::Mongo::Server.new(host, port)
+      server = SidekiqTamer::Mongo::Server.new(host, port)
       expect(server.client.database).to receive(:command).with('serverStatus' => 1).exactly(1).times.and_return(
         double(documents: [
           {
@@ -63,7 +63,7 @@ RSpec.describe(SidekiqResourceGuard::Mongo::Server) do
     end
 
     it 'calculates the average tickets' do
-      server = SidekiqResourceGuard::Mongo::Server.new(host, port)
+      server = SidekiqTamer::Mongo::Server.new(host, port)
       Timecop.freeze
       expect(server.client.database).to receive(:command).with('serverStatus' => 1).exactly(1).times.and_return(
         double(documents: [

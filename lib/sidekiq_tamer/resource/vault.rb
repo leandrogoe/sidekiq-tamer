@@ -1,4 +1,4 @@
-module SidekiqResourceGuard::Resource
+module SidekiqTamer::Resource
   class Vault
     def self.get_resources
       resources

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sidekiq-resource-guard (0.1.0)
+    sidekiq-tamer (0.1.0)
       mongo (>= 2.0.0, < 3.0.0)
       sidekiq (>= 5.0.0, < 7.0.0)
 
@@ -60,7 +60,7 @@ DEPENDENCIES
   pry (~> 0.14.1)
   pry-byebug (~> 3.9)
   rspec (~> 3.0)
-  sidekiq-resource-guard!
+  sidekiq-tamer!
   timecop
 
 BUNDLED WITH

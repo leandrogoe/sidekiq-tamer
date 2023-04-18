@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in sidekiq-resource-guard.gemspec
+# Specify your gem's dependencies in sidekiq-tamer.gemspec
 gemspec
 
 gem "rspec", "~> 3.0"

@@ -1,6 +1,6 @@
 require "bundler/setup"
 require "pry-byebug"
-require "sidekiq_resource_guard"
+require "sidekiq_tamer"
 require "sidekiq/testing"
 require "timecop"
 
@@ -20,10 +20,10 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    SidekiqResourceGuard::Mongo::Server.clear_servers
-    SidekiqResourceGuard::Mongo::ServerOperation.clear_server_operations
-    SidekiqResourceGuard::Mongo::Configuration.clear
-    SidekiqResourceGuard::Resource::Vault.clean_resources
-    Thread.current[:sidekiq_resource_guard_job_name] = nil
+    SidekiqTamer::Mongo::Server.clear_servers
+    SidekiqTamer::Mongo::ServerOperation.clear_server_operations
+    SidekiqTamer::Mongo::Configuration.clear
+    SidekiqTamer::Resource::Vault.clean_resources
+    Thread.current[:sidekiq_tamer_job_name] = nil
   end
 end
