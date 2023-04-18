@@ -2,7 +2,7 @@ require 'mongo'
 require_relative 'command_subscriber'
 require_relative 'configuration'
 
-module SidekiqResourceGuard::Mongo
+module SidekiqTamer::Mongo
   class Server
     def self.server_for(host, port)
       key = "#{host}:#{port}"

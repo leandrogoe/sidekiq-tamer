@@ -32,7 +32,7 @@ jobs:
           git config --global user.name "Leandro Gomez"
       - name: Bundle install
         run: |
-          git config --global --add safe.directory /sidekiq_resource_guard; \
+          git config --global --add safe.directory /sidekiq_tamer; \
           gem install bundler --version 2.4.10; \
           bundle install
       - name: Determine version bump type
@@ -54,7 +54,7 @@ jobs:
           chmod 0600 ~/.gem/credentials
           # DEBUG: output any git changes
           git status
-          bundle exec gem bump -v ${{ env.bump }} --file lib/sidekiq_resource_guard/version.rb --no-commit
+          bundle exec gem bump -v ${{ env.bump }} --file lib/sidekiq_tamer/version.rb --no-commit
           bundle install; # Update Gemfile.lock with new version
           git commit -am "Bumping gem version [skip-ci]"
           bundle exec gem release -t

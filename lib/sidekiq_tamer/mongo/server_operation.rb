@@ -3,9 +3,9 @@ require_relative 'command_subscriber'
 require_relative '../resource/resource_dependencies'
 require_relative 'server'
 
-module SidekiqResourceGuard::Mongo
+module SidekiqTamer::Mongo
   class ServerOperation
-    include SidekiqResourceGuard::Resource::ResourceDependencies
+    include SidekiqTamer::Resource::ResourceDependencies
 
     def self.server_operation_for(host, port, operation)
       key = "#{host}:#{port}:#{operation}"
@@ -25,7 +25,7 @@ module SidekiqResourceGuard::Mongo
     def initialize(host, port, operation)
       @server = Server.server_for(host, port)
       @operation = operation
-      SidekiqResourceGuard::Resource::Vault.add_resources(self)
+      SidekiqTamer::Resource::Vault.add_resources(self)
     end
 
     def name

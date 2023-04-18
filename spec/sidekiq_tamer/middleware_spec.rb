@@ -1,4 +1,4 @@
-RSpec.describe(SidekiqResourceGuard::Middleware) do
+RSpec.describe(SidekiqTamer::Middleware) do
   let(:dummy_resource) {
     dummy_resource = Class.new do
       def name
@@ -21,10 +21,10 @@ RSpec.describe(SidekiqResourceGuard::Middleware) do
 
   before(:each) do
     Sidekiq::Testing.server_middleware do |chain|
-      chain.add SidekiqResourceGuard::Middleware
+      chain.add SidekiqTamer::Middleware
     end
 
-    SidekiqResourceGuard::Resource::Vault.add_resources(dummy_resource)
+    SidekiqTamer::Resource::Vault.add_resources(dummy_resource)
   end
 
   describe 'when the job can be retried' do
@@ -54,7 +54,7 @@ RSpec.describe(SidekiqResourceGuard::Middleware) do
     it 'should prevent job execution when the resource is not healthy' do
       expect(dummy_resource).to receive(:is_healthy?).and_return(false)
 
-      expect { SimpleJob.perform_async }.to raise_error(SidekiqResourceGuard::Middleware::ResourceUnhealthy)
+      expect { SimpleJob.perform_async }.to raise_error(SidekiqTamer::Middleware::ResourceUnhealthy)
       expect(SimpleJob.executions.count).to eq 0
     end
 
