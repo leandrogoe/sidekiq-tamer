@@ -1,5 +1,5 @@
 # Sidekiq Tamer
-Do you ever worry about your Sidekiq jobs consuming too many resources, causing your system to slow down or even crash? When you don't have specific throttling requirements, Sidekiq Tamer can help you to easily protect your resources and prevent them from being overwhelmed.
+Do you ever worry about your Sidekiq jobs consuming too many resources, causing your system to slow down or even crash? When you don't have specific throttling requirements, Sidekiq Tamer can help you to easily protect your resources and prevent them from being overwhelmed by Sidekiq overscaling.
 
 ## Installation
 Getting started with Sidekiq Tamer is a breeze. Simply add the gem to your Gemfile:
@@ -11,7 +11,7 @@ gem 'sidekiq-tamer'
 Then, run bundle install or gem install sidekiq-tamer to install the gem.
 
 ## Usage
-With Sidekiq Tamer, you can delay the execution of jobs that depend on particular resources when those resources are on an stressed state. While Sidekiq Tamer was initially built to help handling the load of MongoDB, its actually a generic framework which you can use to protect any kind of resource, such as a database or an API endpoint.
+With Sidekiq Tamer, you can delay the execution of jobs that depend on particular resources when those are on an stressed state. While Sidekiq Tamer was initially built to help handling the load over MongoDB, its actually a generic framework which you can use to protect any kind of resource, such as a database or an API endpoint.
 
 ### Protecting a MongoDB cluster
 Sidekiq Tamer includes an off-the-shelf implementation to handle MongoDB clusters. To use it, simply execute the following line during your initialization code:
