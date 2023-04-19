@@ -12,3 +12,4 @@
 .ruby_version
 sidekiq-tamer-*.gem
 TODO.txt
+.DS_Store
